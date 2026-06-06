@@ -9,12 +9,12 @@
             <p class="title">{{ author.job }}</p>
           </div>
         </div>
-        <div class="header-right">
+        <!-- <div class="header-right">
           <div class="qr-code">
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=Placeholder" alt="QR Code" />
           </div>
           <p class="qr-desc">扫码在手机端打开</p>
-        </div>
+        </div> -->
       </div>
 
       <div class="divider-line"></div>

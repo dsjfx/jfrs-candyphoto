@@ -2,26 +2,24 @@
   <div class="sidebar-container">
     <div class="profile-section">
       <el-avatar :size="80" :src="avatar" @error="errorHandler" />
-      
+
       <h2 class="blog-title">
-        <span class="title-candy">{{ mainTitle }}</span>
-        <span class="title-divider">·</span>
-        <span class="title-diary">{{ slaveTitle }}</span>
+        <span v-if="appNameParts.hasMaster" class="title-master">
+          {{ appNameParts.master }}
+        </span>
+        <span v-if="appNameParts.hasMaster && appNameParts.hasSlave" class="title-divider">
+          ·
+        </span>
+        <span v-if="appNameParts.hasSlave" class="title-slave">
+          {{ appNameParts.slave }}
+        </span>
       </h2>
       <p class="blog-slogan">{{ slogan }}</p>
     </div>
 
-    <el-menu
-      :default-active="currentRoute"
-      class="sidebar-menu"
-      :router="true"
-    >
+    <el-menu :default-active="currentRoute" class="sidebar-menu" :router="true">
       <!-- 使用 v-for 根据 navItems 动态生成菜单 -->
-      <el-menu-item
-        v-for="item in navItems"
-        :key="item.path"
-        :index="item.path"
-      >
+      <el-menu-item v-for="item in navItems" :key="item.path" :index="item.path">
         <el-icon>
           <component :is="item.icon" />
         </el-icon>
@@ -31,7 +29,7 @@
 
     <div class="footer">
       <div class="footer-copyright">
-        <p>© {{ currentYear }} {{ appTitle }}</p>
+        <p>© {{ currentYear }} {{ appName }}</p>
         <p>All Rights Reserved.</p>
       </div>
       <div class="footer-beian">
@@ -50,17 +48,21 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { House, Picture, FolderOpened, User } from '@element-plus/icons-vue';
-import { useLoading } from '@/composables/useLoading';
 import { getUserAvatar } from '@/api/user';
+import { useLoading } from '@/composables/useLoading';
+import { useAppName, useAppNameStruct } from '@/composables/useAppName'
 
 const {
   // isLoading, 
-  startLoading, 
-  stopLoading 
+  startLoading,
+  stopLoading
 } = useLoading();
 
 const route = useRoute();
-const avatar = ref<string>('');
+const { appNameParts } = useAppNameStruct();
+const { appName } = useAppName();
+
+const avatar = ref<string>('https://picsum.photos/200/200?random=10');
 const icpLicense = ref<string | null>('');
 const publicSecurityLicense = ref<string | null>('');
 
@@ -83,10 +85,10 @@ const currentRoute = computed(() => {
 
 const errorHandler = () => true;
 
-const mainTitle = import.meta.env.VITE_APP_MAIN_TITLE || '糖果';
-const slaveTitle = import.meta.env.VITE_APP_SLAVE_TITLE || '光影春秋';
-const slogan = import.meta.env.VITE_APP_SLOGAN;
-const appTitle = getAppTitle();
+// const mainTitle = import.meta.env.VITE_APP_TITLE_MASTER || '糖果';
+// const slaveTitle = import.meta.env.VITE_APP_TITLE_SLAVE || '光影春秋';
+const slogan = import.meta.env.VITE_APP_TITLE_SLOGAN;
+// const appTitle = getAppTitle();
 const currentYear = new Date().getFullYear()
 
 const navItems = [
@@ -96,27 +98,25 @@ const navItems = [
   { path: '/about', name: '关于', icon: User }
 ]
 
-function getAppTitle() {
-  return mainTitle + ' · ' + slaveTitle;
-}
+// function getAppTitle() {
+//   return mainTitle + ' · ' + slaveTitle;
+// }
 
 const fetchAvatar = async () => {
   startLoading();
 
   try {
-    const res = await getUserAvatar({ id: 10});
+    const res = await getUserAvatar({ id: 10 });
     if (res.success) {
       const _avatar = res.data.avatar;
       if (_avatar) {
-        avatar.value = _avatar;
-      } else {
-        avatar.value = 'https://picsum.photos/200/200?random=10';
+        // avatar.value = _avatar;
       }
       icpLicense.value = res.data.icpLicense || null;
       publicSecurityLicense.value = res.data.publicSecurityLicense || null;
     }
   } catch (error) {
-    
+
   } finally {
     stopLoading();
   }
@@ -149,17 +149,17 @@ onMounted(async () => {
       font-weight: bold;
       margin-bottom: 5px;
 
-      .title-candy {
+      .title-master {
         color: var(--color-primary)
       }
 
       .title-divider {
         color: var(--color-deputy);
-        margin: 0 8px;
+        margin: 0 1px;
         font-weight: 400;
       }
 
-      .title-diary {
+      .title-slave {
         color: var(--color-secondary);
       }
     }
