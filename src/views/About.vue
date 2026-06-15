@@ -79,12 +79,14 @@
           </a>
         </div>
         <div class="signature">
+          <FaIcon :icon="faPenNib" style="margin-right: 6px;" />
           <span>{{ TEXT_SIGNNATURE }}</span>
         </div>
       </div>
 
       <div class="bottom-quote">
-        <p>{{ TEXT_BOTTOM_QUOTE }}</p>
+        <FaIcon :icon="faLeaf" style="margin-right: 6px;" />
+        <span>{{ TEXT_BOTTOM_QUOTE }}</span>
       </div>
     </div>
   </div>
@@ -104,7 +106,9 @@ import {
   faQuoteLeft,
   faMapMarkerAlt,
   faEnvelope,
-  faHeart
+  faHeart,
+  faPenNib,
+  faLeaf
 } from '@fortawesome/free-solid-svg-icons'
 import { onMounted, ref } from 'vue';
 
@@ -124,8 +128,8 @@ const author = ref<UserProfile>({
   email: "hello@linyian.com",
   funFact: "从0到1搭建过3个独立项目，最近沉迷于用Tailwind CSS与Figma做设计系统。",
 });
-const TEXT_SIGNNATURE = ref<string>('✍️ 手写回信，见字如晤');
-const TEXT_BOTTOM_QUOTE = ref<string>('🌿 在数字时代，保留一份手工的真诚');
+const TEXT_SIGNNATURE = ref<string>('手写回信，见字如晤');
+const TEXT_BOTTOM_QUOTE = ref<string>('在数字时代，保留一份手工的真诚');
 
 const getUserProfile = async () => {
   startLoading();
