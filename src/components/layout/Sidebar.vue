@@ -33,12 +33,17 @@
         <p>All Rights Reserved.</p>
       </div>
       <div class="footer-beian">
-        <a v-if="icpLicense" href="https://beian.miit.gov.cn/" target="_blank">
-          {{ icpLicense }}
-        </a>
-        <a v-if="publicSecurityLicense" href="http://www.beian.gov.cn/" target="_blank">
-          {{ publicSecurityLicense }}
-        </a>
+        <span class="footer-beian-icp">
+          <a v-if="icpLicense" :href="icpUrl" target="_blank">
+            {{ icpLicense }}
+          </a>
+        </span>
+        <span class="footer-beian-mps">
+          <!-- <img class="mps" src="@/assets/img/logo-mps.png" alt="mps" /> -->
+          <a v-if="publicSecurityLicense" :href="mpsUrl" target="_blank">
+            {{ publicSecurityLicense }}
+          </a>
+        </span>
       </div>
     </div>
   </div>
@@ -48,23 +53,25 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { House, Picture, FolderOpened, User } from '@element-plus/icons-vue';
-import { getUserAvatar } from '@/api/user';
-import { useLoading } from '@/composables/useLoading';
+// import { getUserAvatar } from '@/api/user';
+// import { useLoading } from '@/composables/useLoading';
 import { useAppName, useAppNameStruct } from '@/composables/useAppName'
 
-const {
-  // isLoading, 
-  startLoading,
-  stopLoading
-} = useLoading();
+// const {
+//   isLoading, 
+//   startLoading,
+//   stopLoading
+// } = useLoading();
 
 const route = useRoute();
 const { appNameParts } = useAppNameStruct();
 const { appName } = useAppName();
 
 const avatar = ref<string>('https://picsum.photos/200/200?random=10');
-const icpLicense = ref<string | null>('');
+const icpLicense = ref<string | null>('苏ICP备2026029057号-1');
+const icpUrl = ref<string | ''>('https://beian.miit.gov.cn/');
 const publicSecurityLicense = ref<string | null>('');
+const mpsUrl = ref<string | ''>('https://beian.mps.gov.cn/#/query/webSearch?code=')
 
 const currentRoute = computed(() => {
   const path = route.path;
@@ -102,28 +109,28 @@ const navItems = [
 //   return mainTitle + ' · ' + slaveTitle;
 // }
 
-const fetchAvatar = async () => {
-  startLoading();
+// const fetchAvatar = async () => {
+//   startLoading();
 
-  try {
-    const res = await getUserAvatar({ id: 10 });
-    if (res.success) {
-      const _avatar = res.data.avatar;
-      if (_avatar) {
-        // avatar.value = _avatar;
-      }
-      icpLicense.value = res.data.icpLicense || null;
-      publicSecurityLicense.value = res.data.publicSecurityLicense || null;
-    }
-  } catch (error) {
+//   try {
+//     const res = await getUserAvatar({ id: 10 });
+//     if (res.success) {
+//       const _avatar = res.data.avatar;
+//       if (_avatar) {
+//         avatar.value = _avatar;
+//       }
+//       icpLicense.value = res.data.icpLicense || null;
+//       publicSecurityLicense.value = res.data.publicSecurityLicense || null;
+//     }
+//   } catch (error) {
 
-  } finally {
-    stopLoading();
-  }
-}
+//   } finally {
+//     stopLoading();
+//   }
+// }
 
 onMounted(async () => {
-  fetchAvatar();
+  // fetchAvatar();
 });
 
 </script>
@@ -214,16 +221,29 @@ onMounted(async () => {
         text-decoration: underline;
       }
     }
-  }
 
-  .footer-copyright {
-    margin-bottom: 5px;
-  }
+    .footer-copyright {
+      margin-bottom: 5px;
+    }
 
-  .footer-beian {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    .footer-beian {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      .footer-beian-icp {
+        
+      }
+
+      .footer-beian-mps {
+
+        .mps {
+          width: 16px;
+          height: 17px;
+          margin-right: 5px;
+        }
+      }
+    }
   }
 }
 

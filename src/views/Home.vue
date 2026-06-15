@@ -77,7 +77,11 @@ const fetchPhotos = async () => {
   startLoading();
 
   try {
-    const res = await getPhotos({ current: current.value, size: pageSize.value });
+    const res = await getPhotos({ 
+      current: current.value, 
+      size: pageSize.value, 
+      status: 'published' 
+    });
     if (res.success) {
       photos.value = res.data.records;
       total.value = res.data.pagination.total;

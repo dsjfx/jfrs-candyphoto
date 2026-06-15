@@ -21,6 +21,7 @@ export interface Blog {
 export interface PhotoQuery {
   current?: number;
   size?: number;
+  status?: string;
   title?: string;
   albumId?: number;
   tags?: string[];

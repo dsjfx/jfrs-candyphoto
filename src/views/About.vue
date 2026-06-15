@@ -2,80 +2,80 @@
   <div class="about-page">
     <div class="about-card">
       <div class="about-header">
-        <div class="header-left">
-          <div class="avatar-icon">📚</div>
+        <div class="header-main">
+          <div class="avatar">
+            <FaIcon :icon="faUserCircle" size="4x" />
+          </div>
           <div class="header-info">
             <h1 class="name">{{ author.name }}</h1>
             <p class="title">{{ author.job }}</p>
           </div>
         </div>
-        <!-- <div class="header-right">
-          <div class="qr-code">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=Placeholder" alt="QR Code" />
+        <div class="header-side">
+          <div class="qr-section">
+            <div class="qr-code">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Placeholder" alt="QR Code" />
+            </div>
+            <span class="qr-label">扫码联系</span>
           </div>
-          <p class="qr-desc">扫码在手机端打开</p>
-        </div> -->
+        </div>
       </div>
 
-      <div class="divider-line"></div>
-
       <div class="quote-section">
+        <div class="quote-icon">
+          <FaIcon :icon="faQuoteLeft" />
+        </div>
         <p class="quote">{{ author.motto }}</p>
       </div>
 
-      <p class="description">
-        {{ author.detailedBio }}
-      </p>
+      <div class="description-section">
+        <p class="description">{{ author.detailedBio }}</p>
+      </div>
 
-      <div class="info-grid">
+      <div class="info-section">
         <div class="info-item">
-          <div class="info-icon">📍</div>
-          <div class="info-content">
-            <h3>栖居</h3>
-            <p>{{ author.location }}</p>
+          <div class="info-icon">
+            <FaIcon :icon="faMapMarkerAlt" />
+          </div>
+          <div class="info-text">
+            <span class="info-label">栖居</span>
+            <span class="info-value">{{ author.location }}</span>
           </div>
         </div>
 
         <div class="info-item">
-          <div class="info-icon">📸</div>
-          <div class="info-content">
-            <h3>爱好</h3>
-            <p>
-              <template v-for="(item, index) in author.interests" :key="index">
-                {{ item }}
-                <el-divider v-if="index !== author.interests.length - 1" direction="vertical" class="hobby-divider" />
-              </template>
-            </p>
+          <div class="info-icon">
+            <FaIcon :icon="faEnvelope" />
           </div>
-        </div>
-
-        <div class="info-item">
-          <div class="info-icon">�</div>
-          <div class="info-content">
-            <h3>书信</h3>
-            <p>{{ author.email }}</p>
+          <div class="info-text">
+            <span class="info-label">书信</span>
+            <span class="info-value">{{ author.email }}</span>
           </div>
         </div>
       </div>
 
-      <div class="divider-line-thin"></div>
+      <div class="interests-section">
+        <div class="interests-label">
+          <FaIcon :icon="faHeart" style="margin-right: 6px;" />
+          <span>爱好</span>
+        </div>
+        <div class="interests-tags">
+          <span v-for="(item, index) in author.interests" :key="index" class="interest-tag">
+            {{ item }}
+          </span>
+        </div>
+      </div>
 
       <div class="footer-section">
         <div class="social-icons">
-          <a :href="author.github" target="_blank" class="social-icon">
-            <span class="icon-text">
-              <FaIcon :icon="faGithub" />
-            </span>
+          <a :href="author.github" target="_blank" class="social-icon" title="GitHub">
+            <FaIcon :icon="faGithub" />
           </a>
-          <a :href="author.twitter" target="_blank" class="social-icon">
-            <span class="icon-text">
-              <FaIcon :icon="faTwitter" />
-            </span>
+          <a :href="author.twitter" target="_blank" class="social-icon" title="Twitter">
+            <FaIcon :icon="faTwitter" />
           </a>
-          <a :href="author.weibo" target="_blank" class="social-icon">
-            <span class="icon-text">
-              <FaIcon :icon="faWeibo" />
-            </span>
+          <a :href="author.weibo" target="_blank" class="social-icon" title="微博">
+            <FaIcon :icon="faWeibo" />
           </a>
         </div>
         <div class="signature">
@@ -97,13 +97,18 @@ import { User, UserProfile } from '@/types';
 import {
   faGithub,
   faTwitter,
-  // faFacebook,
   faWeibo,
 } from '@fortawesome/free-brands-svg-icons'
+import {
+  faUserCircle,
+  faQuoteLeft,
+  faMapMarkerAlt,
+  faEnvelope,
+  faHeart
+} from '@fortawesome/free-solid-svg-icons'
 import { onMounted, ref } from 'vue';
 
 const {
-  // isLoading, 
   startLoading,
   stopLoading
 } = useLoading();
@@ -111,7 +116,7 @@ const {
 const author = ref<UserProfile>({
   name: '解点迷',
   job: '独立创作者 & 全栈设计师',
-  motto: '“ 写作是思想的散步，设计是理性的浪漫。”',
+  motto: '写作是思想的散步，设计是理性的浪漫。',
   shortBio: "写过代码，拍过山川，现在用文字与设计搭建数字花园。相信好的故事能跨越边界，连接真实的人。",
   detailedBio: "前软件工程师，现自由内容创作者。在互联网行业浮沉5年后，决定用更温柔的方式探索技术与人文的交叉点。目前专注于个人知识库、独立博客写作及UI设计。喜爱咖啡、胶片摄影和周末徒步。",
   location: "中国 · 杭州",
@@ -157,158 +162,205 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .about-page {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 60px 20px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   .about-card {
     background-color: var(--bg-card);
-    border-radius: 24px;
-    padding: 30px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border-radius: 32px;
+    padding: 48px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
   }
 
   .about-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
+    align-items: flex-start;
+    gap: 40px;
+    margin-bottom: 40px;
 
-    .header-left {
+    .header-main {
       display: flex;
-      align-items: center;
-      gap: 20px;
+      gap: 24px;
+      flex: 1;
 
-      .avatar-icon {
-        width: 64px;
-        height: 64px;
-        background: #b98a63;
-        border-radius: 12px;
+      .avatar {
+        color: #b98a63;
+        flex-shrink: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 32px;
+        width: 80px;
+        height: 80px;
+        background: rgba(185, 138, 99, 0.1);
+        border-radius: 20px;
       }
 
       .header-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
         .name {
-          font-size: 36px;
+          font-size: 38px;
           font-weight: 700;
-          color: #1a1a1a;
+          color: #2a2318;
           margin: 0 0 8px 0;
+          letter-spacing: -0.5px;
         }
 
         .title {
           font-size: 16px;
-          color: #666;
+          color: #8c7a60;
           margin: 0;
-          letter-spacing: 0.5px;
+          letter-spacing: 0.3px;
         }
       }
     }
 
-    .header-right {
+    .header-side {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
 
-      .qr-code {
-        width: 80px;
-        height: 80px;
-        padding: 4px;
-        background: #fff;
-        border-radius: 8px;
-        border: 1px solid #e8dcc8;
+      .qr-section {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
+        gap: 10px;
 
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
+        .qr-code {
+          width: 100px;
+          height: 100px;
+          padding: 8px;
+          background: #fff;
+          border-radius: 16px;
+          border: 1px solid #e8dcc8;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+        }
+
+        .qr-label {
+          font-size: 12px;
+          color: #9b8a70;
         }
       }
-
-      .qr-desc {
-        font-size: 12px;
-        color: #999;
-        margin: 0;
-        letter-spacing: 0.5px;
-      }
     }
-  }
-
-  .divider-line {
-    height: 2px;
-    border: none;
-    border-top: 2px solid #d4c4a8;
-    margin: 10px 0;
-  }
-
-  .divider-line-thin {
-    height: 1px;
-    background: #e8dcc8;
-    margin: 32px 0;
-    border: none;
   }
 
   .quote-section {
-    margin: 32px 0;
-    padding-left: 12px;
-    border-left: 4px solid #b98a63;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 32px;
+    padding: 24px 28px;
+    background: rgba(185, 138, 99, 0.06);
+    border-radius: 20px;
+
+    .quote-icon {
+      color: #b98a63;
+      opacity: 0.6;
+      margin-top: 4px;
+    }
 
     .quote {
-      font-size: 20px;
+      font-size: 19px;
       color: #5e4b3c;
       margin: 0;
       font-style: italic;
+      line-height: 1.7;
     }
   }
 
-  .description {
-    font-size: 16px;
-    line-height: 1.8;
-    color: #333;
-    margin: 24px 0;
+  .description-section {
+    margin-bottom: 40px;
+
+    .description {
+      font-size: 16px;
+      line-height: 2;
+      color: #4a4035;
+      margin: 0;
+    }
   }
 
-  .info-grid {
+  .info-section {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 24px;
-    margin: 32px 0;
+    margin-bottom: 36px;
 
     .info-item {
       display: flex;
-      gap: 12px;
+      gap: 14px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 16px;
+      border: 1px solid rgba(212, 196, 168, 0.3);
 
       .info-icon {
-        font-size: 24px;
+        color: #b98a63;
+        font-size: 22px;
         flex-shrink: 0;
+        margin-top: 2px;
       }
 
-      .info-content {
-        h3 {
-          font-size: 16px;
+      .info-text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .info-label {
+          font-size: 13px;
           font-weight: 600;
-          color: #1a1a1a;
-          margin: 0 0 4px 0;
+          color: #9b8a70;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
 
-        p {
-          font-size: 15px;
-          color: #555;
-          margin: 0;
-          line-height: 1.6;
+        .info-value {
+          font-size: 16px;
+          color: #4a4035;
         }
+      }
+    }
+  }
 
-        .hobby-divider {
-          height: 10px;
-          border-left-color: #b98a63;
-          opacity: 0.4;
+  .interests-section {
+    margin-bottom: 40px;
+
+    .interests-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #9b8a70;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+    }
+
+    .interests-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      .interest-tag {
+        padding: 8px 18px;
+        background: rgba(185, 138, 99, 0.1);
+        color: #8c6a4c;
+        border-radius: 20px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: rgba(185, 138, 99, 0.2);
         }
       }
     }
@@ -318,16 +370,17 @@ onMounted(async () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 24px 0;
+    padding-top: 32px;
+    border-top: 1px solid rgba(212, 196, 168, 0.4);
 
     .social-icons {
       display: flex;
-      gap: 16px;
+      gap: 14px;
 
       .social-icon {
-        width: 40px;
-        height: 40px;
-        background: #e8dcc8;
+        width: 44px;
+        height: 44px;
+        background: rgba(232, 220, 200, 0.5);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -335,71 +388,74 @@ onMounted(async () => {
         cursor: pointer;
         transition: all 0.3s ease;
         text-decoration: none;
-        color: inherit;
+        color: #6a5c49;
+        font-size: 20px;
 
         &:hover {
-          background: #d4c4a8;
-          transform: translateY(-2px);
-        }
-
-        .icon-text {
-          font-size: 18px;
+          background: #e8dcc8;
+          color: #b98a63;
+          transform: translateY(-3px);
         }
       }
     }
 
     .signature {
       font-size: 14px;
-      color: #888;
+      color: #9b8a70;
       font-style: italic;
     }
   }
 
   .bottom-quote {
-    background: #f7eed9;
+    background: linear-gradient(135deg, rgba(247, 238, 217, 0.5), rgba(255, 255, 255, 0.5));
     border-radius: 24px;
-    padding: 16px 24px;
+    padding: 20px 32px;
     text-align: center;
-    margin-top: 24px;
+    margin-top: 32px;
+    border: 1px dashed rgba(185, 138, 99, 0.3);
 
     p {
-      font-size: 15px;
-      color: #666;
+      font-size: 14px;
+      color: #8c7a60;
       margin: 0;
+      letter-spacing: 0.3px;
     }
   }
 }
 
 @media (max-width: 768px) {
   .about-page {
-    padding: 20px 16px;
+    padding: 40px 16px;
 
     .about-card {
       padding: 32px 24px;
     }
 
     .about-header {
-      flex-direction: column;
-      gap: 20px;
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: 28px;
 
-      .header-left {
+      .header-main {
         flex-direction: column;
+        align-items: center;
         text-align: center;
+
+        .avatar {
+          width: 90px;
+          height: 90px;
+          font-size: 48px;
+        }
 
         .header-info {
           .name {
-            font-size: 28px;
+            font-size: 30px;
           }
         }
       }
-
-      .header-right {
-        display: flex;
-        justify-content: center;
-      }
     }
 
-    .info-grid {
+    .info-section {
       grid-template-columns: 1fr;
     }
 

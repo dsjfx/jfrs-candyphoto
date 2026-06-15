@@ -145,7 +145,7 @@ const searchQuery = ref('');
 const loading = ref(false);
 const photos = ref<Blog[]>([]);
 const current = ref(1);
-const pageSize = ref(4);
+const pageSize = ref(8);
 const total = ref(0);
 
 const lazy = ref(true)
