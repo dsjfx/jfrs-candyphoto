@@ -46,29 +46,29 @@ const onWheel = (e: WheelEvent) => {
   scale.value = Math.min(Math.max(0.5, scale.value + factor), 4);
 }
 
-const onPointerDown = (e: PointerEvent) => {
-  isPanning.value = true;
-  lastX.value = e.clientX;
-  lastY.value = e.clientY;
-  (e.target as Element).setPointerCapture?.(e.pointerId);
-}
+// const onPointerDown = (e: PointerEvent) => {
+//   isPanning.value = true;
+//   lastX.value = e.clientX;
+//   lastY.value = e.clientY;
+//   (e.target as Element).setPointerCapture?.(e.pointerId);
+// }
 
-const onPointerMove = (e: PointerEvent) => {
-  if (!isPanning.value) return;
-  const dx = e.clientX - lastX.value;
-  const dy = e.clientY - lastY.value;
-  lastX.value = e.clientX;
-  lastY.value = e.clientY;
-  translateX.value += dx;
-  translateY.value += dy;
-}
+// const onPointerMove = (e: PointerEvent) => {
+//   if (!isPanning.value) return;
+//   const dx = e.clientX - lastX.value;
+//   const dy = e.clientY - lastY.value;
+//   lastX.value = e.clientX;
+//   lastY.value = e.clientY;
+//   translateX.value += dx;
+//   translateY.value += dy;
+// }
 
-const onPointerUp = (e: PointerEvent) => {
-  isPanning.value = false;
-  try {
-    (e.target as Element).releasePointerCapture?.(e.pointerId);
-  } catch { }
-}
+// const onPointerUp = (e: PointerEvent) => {
+//   isPanning.value = false;
+//   try {
+//     (e.target as Element).releasePointerCapture?.(e.pointerId);
+//   } catch { }
+// }
 </script>
 
 <style scoped lang="scss">
