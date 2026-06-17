@@ -15,7 +15,7 @@ export function getPhotosWithAdditions(params?: PhotoQuery): Promise<ResponseDat
 }
 
 export function getPhotoById(id: number): Promise<ResponseData<Blog>> {
-  return get(makeUrl(`/photos/view/${id}`));
+  return get(makeUrl(`/view/${id}`));
 }
 
 export function createPhoto(data: Partial<Blog>): Promise<ResponseData<Blog>> {
@@ -23,15 +23,15 @@ export function createPhoto(data: Partial<Blog>): Promise<ResponseData<Blog>> {
 }
 
 export function updatePhoto(id: number, data: Partial<Blog>): Promise<ResponseData<Blog>> {
-  return put(makeUrl(`/photos/${id}`), data);
+  return put(makeUrl(`/${id}`), data);
 }
 
 export function deletePhoto(id: number): Promise<ResponseData<null>> {
-  return del(makeUrl(`/photos/${id}`));
+  return del(makeUrl(`/${id}`));
 }
 
 export function uploadPhoto(formData: FormData): Promise<ResponseData<Blog>> {
-  return upload(makeUrl('/photos/upload'), formData);
+  return upload(makeUrl('/upload'), formData);
 }
 
 export function likePhoto(id: number): Promise<ResponseData<null>> {

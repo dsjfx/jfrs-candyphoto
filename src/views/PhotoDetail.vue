@@ -13,13 +13,33 @@
       <div class="photo-info">
         <h1 class="photo-title">{{ photo.title }}</h1>
         <div class="photo-meta">
-          <span><el-icon><Calendar /></el-icon> {{ formatDate(photo.date) }}</span>
-          <span v-if="photo.category"><el-icon><Folder /></el-icon> {{ photo.category.name }}</span>
-          <span><el-icon><View /></el-icon> {{ photo.views }} 次浏览</span>
+          <span>
+            <el-icon>
+              <Calendar />
+            </el-icon>
+            {{ formatDate(photo.date) }}
+          </span>
+          <span v-if="photo.category" :style="{ color: parseColorToRgba(photo.category.color || '#666', 1) }">
+            <el-icon>
+              <Folder />
+            </el-icon>
+            {{ photo.category.name }}
+          </span>
+          <span>
+            <el-icon>
+              <View />
+            </el-icon>
+            {{ photo.views }} 次浏览
+          </span>
         </div>
+        <!-- content -->
         <div class="photo-description" v-html="photo.content"></div>
+
+        <!-- tags -->
         <div v-if="photo.tags?.length" class="photo-tags">
-          <el-tag v-for="tag in photo.tags" :key="tag" class="tag" size="small">#{{ tag.name }}</el-tag>
+          <el-tag v-for="tag in photo.tags" :key="tag" class="tag" size="small" :style="tagStyle(tag)">
+            #{{ tag.name }}
+          </el-tag>
         </div>
       </div>
     </div>
@@ -68,6 +88,40 @@ const fetchPhoto = async () => {
 onMounted(() => {
   fetchPhoto();
 });
+
+// tag color helper: accepts hex like #rrggbb or rgb(...) and returns rgba with given alpha
+const parseColorToRgba = (input: string, alpha = 1) => {
+  if (!input) return '';
+  input = input.trim();
+  // hex
+  if (input.startsWith('#')) {
+    const hex = input.slice(1);
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+  // rgb or rgba
+  if (input.startsWith('rgb')) {
+    // replace rgba(...) with rgba(...)
+    const inside = input.substring(input.indexOf('(') + 1, input.indexOf(')'));
+    const parts = inside.split(',').map((s) => s.trim());
+    const r = parts[0];
+    const g = parts[1] || 0;
+    const b = parts[2] || 0;
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+  return input;
+}
+
+const tagStyle = (tag: any) => {
+  const color = tag?.color || '#059669';
+  return {
+    ['--tag-bg']: parseColorToRgba(color, 0.1),
+    ['--tag-color']: parseColorToRgba(color, 1),
+    border: 'none'
+  } as any;
+}
 </script>
 
 <style lang="scss" scoped>
@@ -87,9 +141,10 @@ onMounted(() => {
     transition: all 0.3s ease;
 
     &:hover {
+      color: var(--color-primary);
       background: #f5f5f5;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-      transform: translateY(-2px);
+      // transform: translateY(-2px);
     }
   }
 
@@ -269,7 +324,7 @@ onMounted(() => {
               background: var(--bg-secondary);
             }
           }
-        }         
+        }
       }
 
       .photo-tags {
@@ -281,14 +336,14 @@ onMounted(() => {
           height: 30px;
           padding: 0.4rem 0.6rem;
           font-size: 0.8rem;
-          color: var(--color-primary, #059669);
-          background: rgba(var(--color-primary, 5, 150, 105), 0.1);
+          color: var(--tag-color, #059669);
+          background: var(--tag-bg, rgba(5, 150, 105, 0.1));
           border-radius: 12px;
           transition: all 0.3s ease;
           cursor: pointer;
-  
+
           &:hover {
-            background: var(--color-primary, #059669);
+            background: var(--tag-color, #059669);
             color: white;
           }
         }
