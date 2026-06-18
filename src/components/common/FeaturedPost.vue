@@ -24,7 +24,7 @@
       </h2>
       <p class="post-description">{{ featuredPhoto.summary }}</p>
       <div class="post-actions">
-        <span class="read-more" @click="handleFeatured">继续阅读 →</span>
+        <span class="read-more" @click="handleFeatured">继续阅读</span>
       </div>
     </div>
   </div>

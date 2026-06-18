@@ -28,7 +28,7 @@
 
       <!-- card footer -->
       <div class="card-footer">
-        <span class="read-more" @click="handleClick">继续阅读 →</span>
+        <span class="read-more" @click="handleClick">继续阅读</span>
       </div>
     </div>
   </div>
