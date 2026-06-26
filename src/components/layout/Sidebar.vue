@@ -39,7 +39,7 @@
           </a>
         </span>
         <span class="footer-beian-mps">
-          <!-- <img class="mps" src="@/assets/img/logo-mps.png" alt="mps" /> -->
+          <img class="mps" src="@/assets/img/logo-mps.png" alt="mps" />
           <a v-if="publicSecurityLicense" :href="mpsUrl" target="_blank">
             {{ publicSecurityLicense }}
           </a>
@@ -70,8 +70,8 @@ const { appName } = useAppName();
 const avatar = ref<string>('https://picsum.photos/200/200?random=10');
 const icpLicense = ref<string | null>('苏ICP备2026029057号-1');
 const icpUrl = ref<string | ''>('https://beian.miit.gov.cn/');
-const publicSecurityLicense = ref<string | null>('');
-const mpsUrl = ref<string | ''>('https://beian.mps.gov.cn/#/query/webSearch?code=')
+const publicSecurityLicense = ref<string | null>('苏公网安备32040002010730号');
+const mpsUrl = ref<string | ''>('https://beian.mps.gov.cn/#/query/webSearch?code=32040002010730')
 
 const currentRoute = computed(() => {
   const path = route.path;
@@ -231,11 +231,12 @@ onMounted(async () => {
       flex-direction: column;
       gap: 2px;
 
-      .footer-beian-icp {
-        
-      }
+      .footer-beian-icp {}
 
       .footer-beian-mps {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
 
         .mps {
           width: 16px;
