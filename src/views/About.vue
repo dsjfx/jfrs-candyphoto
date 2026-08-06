@@ -135,7 +135,7 @@ const getUserProfile = async () => {
   startLoading();
 
   try {
-    const res = await getUserInfo({ id: 1 });
+    const res = await getUserInfo({ id: 3 });
     if (res.success) {
       const user: User = res.data;
       if (user) {

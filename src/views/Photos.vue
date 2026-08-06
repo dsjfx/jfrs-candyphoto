@@ -4,16 +4,12 @@
     <div class="gallery-header">
       <h2>{{ photoTitle }}</h2>
       <div class="search-bar">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="搜索图片..."
-          @keyup.enter="handleSearch(true)"
-        />
+        <input ref="searchInputRef" v-model="searchQuery" type="text" placeholder="搜索图片..." />
         <FaIcon :icon="faSearch" />
+        <button v-if="searchQuery" class="clear-btn" type="button" @click="clearSearch" aria-label="清除搜索">×</button>
       </div>
     </div>
-    
+
     <div v-if="isLoading" class="loading-container">
       <LoadingSpinner />
       <p class="loading-text">{{ loadingText }}</p>
@@ -21,32 +17,17 @@
 
     <!-- 瀑布流容器 -->
     <div v-else class="masonry-container">
-      <div
-        v-for="column in columns"
-        :key="column.index"
-        class="masonry-column"
-        :style="{ width: columnWidth }"
-      >
-        <div
-          v-for="item in column.items"
-          :key="item.id"
-          class="image-item"
-          @click="handleImageClick(item)"
-        >
+      <div v-for="column in columns" :key="column.index" class="masonry-column" :style="{ width: columnWidth }">
+        <div v-for="item in column.items" :key="item.id" class="image-item" @click="handleImageClick(item)">
           <!-- 图片容器 -->
           <div class="image-container">
-            <img
-              :src="item.cover.url"
-              :alt="item.title"
-              :loading="lazy ? 'lazy' : 'eager'"
-              @load="onImageLoad"
-            />
-            
+            <img :src="item.cover.url" :alt="item.title" :loading="lazy ? 'lazy' : 'eager'" @load="onImageLoad" />
+
             <!-- 文字说明遮罩层 -->
             <div class="image-overlay">
               <div class="image-content">
                 <h3 class="image-title">{{ item.title }}</h3>
-                <p class="image-description">{{ item.summary }}</p >
+                <p class="image-description">{{ item.summary }}</p>
                 <div class="image-meta">
                   <span class="date">{{ formatDate(item.date) }}</span>
                   <span class="category">{{ item.category.name }}</span>
@@ -60,23 +41,11 @@
 
     <!-- 加载更多按钮 -->
     <div v-if="hasMore" class="load-more-wrapper">
-      <el-button
-        v-if="!isLoading"
-        type="primary"
-        size="large"
-        @click="handlePageChange(current + 1)"
-        class="load-more-btn"
-      >
+      <el-button v-if="!isLoading" type="primary" size="large" @click="handlePageChange(current + 1)"
+        class="load-more-btn">
         加载更多
       </el-button>
-      <el-button
-        v-else
-        type="primary"
-        size="large"
-        loading
-        disabled
-        class="load-more-btn"
-      >
+      <el-button v-else type="primary" size="large" loading disabled class="load-more-btn">
         加载中...
       </el-button>
     </div>
@@ -85,7 +54,7 @@
     <div v-if="photos.length > 0 && !hasMore" class="no-more-wrapper">
       <span class="no-more-text">— 没有更多内容了 —</span>
     </div>
-    
+
     <!-- 分页控件 -->
     <!-- <Paging 
       v-if="!isLoading && !isEmpty"
@@ -116,6 +85,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 // import Paging from '@/components/page/Paging.vue'
 import LoadingSpinner from '@/components/core/LoadingSpinner.vue'
@@ -126,11 +96,11 @@ import { addPhotoAttrs, formatDate } from '@/utils/funcUtils';
 
 const {
   state,
-  isLoading, 
-  isLoadingMore, 
+  isLoading,
+  isLoadingMore,
   isLoadingPage,
-  startLoading, 
-  stopLoading 
+  startLoading,
+  stopLoading
 } = useLoading()
 
 // 响应式数据
@@ -140,6 +110,7 @@ const columnWidth = ref('25%')
 const columnHeights = ref<any>([])
 
 const selectedPhoto = ref<Blog | null>(null)
+const searchInputRef = ref<HTMLInputElement | null>(null)
 
 const searchQuery = ref('');
 const loading = ref(false);
@@ -181,27 +152,27 @@ const initColumnHeights = () => {
 }
 
 const distributePhotos = (initial: boolean, load: boolean = true) => {
-  if(initial) {
+  if (initial) {
     initColumns();
     initColumnHeights();
   }
-  
+
   let totalItems = photos.value.length
   const startIndex = (current.value - 1) * pageSize.value
   const endIndex = Math.min(startIndex + pageSize.value, totalItems)
 
   const currentPhotos = load ? photos.value.slice(startIndex, endIndex) : photos.value;
-  
+
   // 简单的按高度分布算法
   currentPhotos.forEach(p => {
     const _columnHeights = columnHeights.value
 
     // 找到高度最小的列
     const minHeightIndex = _columnHeights.indexOf(Math.min(..._columnHeights))
-    
+
     // 将图片添加到该列
     columns.value[minHeightIndex] && columns.value[minHeightIndex].items.push(p)
-    
+
     // 更新列高度（考虑图片宽高比）
     _columnHeights[minHeightIndex] += p.cover.height / p.cover.width
   });
@@ -216,14 +187,14 @@ const fetchPhotos = async (init: boolean) => {
   }
 
   try {
-    const res = await getPhotosWithAdditions({ 
-      current: current.value, 
+    const res = await getPhotosWithAdditions({
+      current: current.value,
       size: pageSize.value,
     });
     if (res.success) {
       const _photos = res.data.records;
       const _total = res.data.pagination.total;
-      
+
       addPhotoAttrs(_photos);
 
       if (_photos && _photos.length > 0) {
@@ -231,7 +202,7 @@ const fetchPhotos = async (init: boolean) => {
           photos.value.push(p);
         })
       }
-      
+
       if (total.value != _total) {
         total.value = _total;
       }
@@ -283,18 +254,18 @@ const handleSearch = async (init: boolean) => {
     await fetchPhotos(true);
     return;
   }
-  
+
   loading.value = init;
-  if(init) {
+  if (init) {
     current.value = 1;
     resetPhoto();
   }
-  
+
   startLoading();
   try {
     const res = await searchPhotos(
-      searchQuery.value, 
-      { current: current.value, size: pageSize.value}
+      searchQuery.value,
+      { current: current.value, size: pageSize.value }
     );
     if (res.success) {
       const _photos = res.data.records;
@@ -307,7 +278,7 @@ const handleSearch = async (init: boolean) => {
           photos.value.push(p);
         })
       }
-      
+
       if (total.value != _total) {
         total.value = _total;
       }
@@ -319,6 +290,14 @@ const handleSearch = async (init: boolean) => {
   }
 }
 
+const clearSearch = () => {
+  searchQuery.value = ''
+  current.value = 1
+  handleSearch(true)
+  // focus input after clearing
+  if (searchInputRef.value) searchInputRef.value.focus()
+}
+
 const onImageLoad = (event: Event) => {
   const img = event.target as HTMLImageElement
   img.style.opacity = '1'
@@ -326,7 +305,7 @@ const onImageLoad = (event: Event) => {
 
 const updateColumnCount = () => {
   const width = window.innerWidth
-  
+
   if (width >= 1200) {
     columnCount.value = 4
   } else if (width >= 768) {
@@ -336,19 +315,24 @@ const updateColumnCount = () => {
   } else {
     columnCount.value = 1
   }
-  
+
   columnWidth.value = `${100 / columnCount.value}%`
   distributePhotos(true, false);
 }
 
+// 创建防抖函数
+const debouncedSearch = useDebounceFn((query: boolean) => {
+  handleSearch(query)
+}, 500)
+
 // 生命周期钩子
 onMounted(async () => {
   await fetchPhotos(true);
-  
+
   updateColumnCount();
-  
+
   // distributePhotos(false);
-  
+
   window.addEventListener('resize', updateColumnCount)
 })
 
@@ -363,6 +347,15 @@ watch(photos, () => {
   }
   distributePhotos(loading.value);
 }, { deep: true })
+
+// 监听搜索词的变化，并触发防抖搜索
+watch(searchQuery, (val, oldVal) => {
+  if (val !== oldVal && val.trim().length > 0) {
+    debouncedSearch(true)
+  } else {
+    photos.value = []
+  }
+})
 </script>
 
 <style lang="scss">
@@ -415,9 +408,34 @@ watch(photos, () => {
         transform: translateY(-50%);
         color: var(--text-muted);
         cursor: pointer;
-      }      
+      }
+
+      /* clear button inside search input */
+      .clear-btn {
+        position: absolute;
+        right: 0.6rem;
+        top: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: transparent;
+        border: none;
+        border-radius: 50%;
+        font-size: 1.1rem;
+        color: #666;
+        cursor: pointer;
+        transform: translateY(-50%);
+        transition: background-color 0.12s ease, color 0.12s ease;
+
+        &:hover {
+          background: rgba(var(--accent-color-rgb, 5, 150, 105), 0.08);
+          color: var(--accent-color);
+        }
+      }
     }
-      
+
     // &::before {
     //   content: '';
     //   position: absolute;
@@ -437,28 +455,28 @@ watch(photos, () => {
     justify-content: center;
     position: relative;
 
-      .spinner-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(4px);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-        animation: fadeIn 0.3s ease;
-      }
+    .spinner-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      animation: fadeIn 0.3s ease;
+    }
 
-      .loading-text {
-        margin-top: 16px;
-        color: #666;
-        font-size: 14px;
-        animation: pulse 1.5s infinite;
-      }    
+    .loading-text {
+      margin-top: 16px;
+      color: #666;
+      font-size: 14px;
+      animation: pulse 1.5s infinite;
+    }
   }
 
   .masonry-container {
@@ -486,12 +504,10 @@ watch(photos, () => {
 
         .image-overlay {
           opacity: 1;
-          background: linear-gradient(
-            to top,
-            rgba(0, 0, 0, 0.8) 0%,
-            rgba(0, 0, 0, 0.4) 50%,
-            rgba(0, 0, 0, 0) 100%
-          );
+          background: linear-gradient(to top,
+              rgba(0, 0, 0, 0.8) 0%,
+              rgba(0, 0, 0, 0.4) 50%,
+              rgba(0, 0, 0, 0) 100%);
         }
 
         .image-title {
@@ -523,12 +539,10 @@ watch(photos, () => {
       left: 0;
       right: 0;
       padding: 20px;
-      background: linear-gradient(
-        to top,
-        rgba(0, 0, 0, 0.6) 0%,
-        rgba(0, 0, 0, 0.2) 50%,
-        rgba(0, 0, 0, 0) 100%
-      );
+      background: linear-gradient(to top,
+          rgba(0, 0, 0, 0.6) 0%,
+          rgba(0, 0, 0, 0.2) 50%,
+          rgba(0, 0, 0, 0) 100%);
       color: white;
       transition: all 0.3s ease;
       opacity: 0.8;
@@ -588,7 +602,7 @@ watch(photos, () => {
       font-weight: 500;
       transition: all 0.3s ease;
       box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
-      
+
       &:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
@@ -618,7 +632,8 @@ watch(photos, () => {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
-    max-width: 500px;  /* 或你需要的任何值 */
+    max-width: 500px;
+    /* 或你需要的任何值 */
     // max-height: 90vh;
     background: rgba(0, 0, 0, 0.9);
     display: flex;
@@ -715,6 +730,7 @@ watch(photos, () => {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -725,6 +741,7 @@ watch(photos, () => {
     transform: translateY(50px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
