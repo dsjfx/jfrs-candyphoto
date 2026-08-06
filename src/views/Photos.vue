@@ -624,31 +624,29 @@ watch(searchQuery, (val, oldVal) => {
 
   .modal {
     position: fixed;
-    // top: 0;
-    // left: 0;
-    // right: 0;
-    // bottom: 0;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 500px;
-    /* 或你需要的任何值 */
-    // max-height: 90vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 20px;
     background: rgba(0, 0, 0, 0.9);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    overflow: auto;
     animation: fadeIn 0.3s ease;
 
     .modal-content {
       position: relative;
-      max-width: 90%;
-      max-height: 90%;
+      width: 100%;
+      max-width: 720px;
+      max-height: calc(100vh - 40px);
       background: white;
       border-radius: 12px;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
       animation: slideUp 0.3s ease;
 
       .close-btn {
@@ -675,12 +673,14 @@ watch(searchQuery, (val, oldVal) => {
       img {
         width: 100%;
         height: auto;
-        max-height: 70vh;
+        max-height: 60vh;
         object-fit: contain;
+        display: block;
       }
 
       .modal-info {
         padding: 25px;
+        overflow: auto;
 
         h2 {
           margin: 0 0 15px 0;
