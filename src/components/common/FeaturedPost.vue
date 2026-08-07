@@ -73,6 +73,7 @@ const featuredPhoto = ref<FeaturedPhotoDisplay>({
   likes: [],
   createdAt: '',
   updatedAt: '',
+  publishedAt: '',
   coverImage: '',
   coverThumbnail: '',
   cover: {} as Photo,
