@@ -14,6 +14,7 @@ export interface Blog {
   likes: number[];
   createdAt: string;
   updatedAt: string;
+  publishedAt: string;
   date: string;
   photos?: Photo[];
 }
